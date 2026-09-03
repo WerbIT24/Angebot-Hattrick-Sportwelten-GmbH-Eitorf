@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>WerbIT24 – Angebot Netzwerk-, Kamera- & Multimedia-Installation</title>
 <style>
   :root{
@@ -137,6 +140,9 @@
   .controls .cnt{font-size:14px;min-width:56px;text-align:center;letter-spacing:.5px;}
   .hint{position:fixed;bottom:26px;left:22px;color:#6b7280;font-size:12px;z-index:50;}
 
+  /* Jump menu — nur auf Handy/Tablet sichtbar */
+  .jump{display:none;}
+
   /* ---------- Handy & Tablet (≤900px) — Desktop bleibt unverändert ---------- */
   @media (max-width:900px){
     html,body{overflow-x:hidden;overflow-y:auto;height:auto;background:#fff;}
@@ -237,6 +243,18 @@
     .controls button{width:48px;height:48px;min-width:48px;min-height:48px;
       font-size:22px;border-radius:50%;-webkit-appearance:none;appearance:none;}
     .controls .cnt{font-size:16px;min-width:64px;}
+
+    /* Direktes Folienmenü unten — jede Folie ein Tap entfernt */
+    .jump{display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;
+      -webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;
+      position:fixed;left:0;right:0;bottom:76px;padding:8px 10px;background:rgba(255,255,255,.96);
+      border-top:1px solid var(--border);z-index:49;}
+    .jump button{margin:3px;min-width:48px;min-height:48px;padding:0 12px;font-size:16px;font-weight:700;
+      color:var(--blue);background:#fff;border:1.5px solid var(--border);border-radius:24px;
+      -webkit-appearance:none;appearance:none;cursor:pointer;}
+    .jump button.on{background:var(--blue);color:#fff;border-color:var(--blue);}
+    /* Platz für Menü + Controls unten */
+    .slide{padding-bottom:150px!important;}
   }
 
   /* iPhone 14/15/16 Plus & Samsung S24 Ultra */
@@ -559,17 +577,35 @@
   <span class="cnt" id="cnt">1 / 11</span>
   <button id="next" aria-label="Weiter">›</button>
 </div>
+<nav class="jump" id="jump" aria-label="Direkt zu Folie">
+  <button data-i="0">1</button>
+  <button data-i="1">2</button>
+  <button data-i="2">3</button>
+  <button data-i="3">4</button>
+  <button data-i="4">5</button>
+  <button data-i="5">6</button>
+  <button data-i="6">7</button>
+  <button data-i="7">8</button>
+  <button data-i="8">9</button>
+  <button data-i="9">10</button>
+  <button data-i="10">11</button>
+</nav>
 <div class="hint">← / → zum Blättern</div>
 
 <script>
   var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var jumpBtns = Array.prototype.slice.call(document.querySelectorAll('#jump button'));
   var cur = 0;
   function show(i){
     cur = (i + slides.length) % slides.length;
     slides.forEach(function(s,k){ s.classList.toggle('active', k===cur); });
+    jumpBtns.forEach(function(b,k){ b.classList.toggle('on', k===cur); });
     document.getElementById('cnt').textContent = (cur+1) + ' / ' + slides.length;
     if(window.innerWidth <= 900){ window.scrollTo(0,0); }
   }
+  jumpBtns.forEach(function(b){
+    b.addEventListener('click', function(){ show(parseInt(b.getAttribute('data-i'),10)); });
+  });
   document.getElementById('prev').onclick = function(){ show(cur-1); };
   document.getElementById('next').onclick = function(){ show(cur+1); };
   document.addEventListener('keydown', function(e){
